@@ -1,0 +1,15 @@
+name: Auto push from 'master' to 'docker-deploy'
+on:
+  push:
+    branches:
+      - master
+jobs:
+  push-to-docker-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push from 'master' to 'docker-deploy'
+        uses: ad-m/github-push-action@latest
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docker-deploy
+          force: true          
