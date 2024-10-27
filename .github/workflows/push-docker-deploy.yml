@@ -11,5 +11,6 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${GITHUB_REPOSITORY}
           branch: docker-deploy
           force: true          
