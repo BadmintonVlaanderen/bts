@@ -1,6 +1,7 @@
 name: Build and push docker image
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - docker-deploy
 jobs:
