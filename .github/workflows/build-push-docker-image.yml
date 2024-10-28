@@ -1,0 +1,16 @@
+name: Build and push docker image
+on:
+  push:
+    branches:
+      - docker-deploy
+jobs:
+  push-to-docker-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - name: Build and push docker image
+        run: |
+          cd bts
+          gh run --shell ./docker-push-bv
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_ID }}
