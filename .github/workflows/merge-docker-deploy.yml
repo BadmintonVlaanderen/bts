@@ -19,5 +19,6 @@ jobs:
           development_branch: docker-deploy
           allow_ff: false
           allow_forks: true
+          push_token: WORKFLOW_TOKEN
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ID }}
+          WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_ID }}
