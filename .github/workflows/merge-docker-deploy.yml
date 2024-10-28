@@ -20,4 +20,4 @@ jobs:
           allow_ff: false
           allow_forks: true
         env:
-          GITHUB_TOKEN: ${{ secrets.1038435 }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_ID }}
