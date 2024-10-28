@@ -9,4 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Build and push docker image
-        run: docker-push-bv
+        run: |
+          cd bts
+          gh run --shell ./docker-push-bv
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_ID }}
