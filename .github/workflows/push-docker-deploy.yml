@@ -1,16 +1,21 @@
-name: Auto push from 'master' to 'docker-deploy'
+name: Auto merge from 'master' to 'docker-deploy'
 on:
   push:
     branches:
       - master
 jobs:
-  push-to-docker-deploy:
+  merge-to-docker-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
-      - name: Push from 'master' to 'docker-deploy'
-        uses: ad-m/github-push-action@master
+      - name: Checkout
+        uses: actions/checkout@main
         with:
+          fetch-depth: 0
+      - name: Merge from 'master' to 'docker-deploy'
+        uses: robotology/gh-action-nightly-merge@master
+        with:
+          stable_branch: master
+          development_branch: docker-deploy
+          allow_ff: false
+        env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: docker-deploy
-          force: true          
