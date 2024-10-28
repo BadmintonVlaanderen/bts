@@ -1,0 +1,23 @@
+name: Auto merge from 'master' to 'docker-deploy'
+on:
+  push:
+    branches:
+      - master
+jobs:
+  merge-to-docker-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+      - name: Merge from 'master' to 'docker-deploy'
+        uses: robotology/gh-action-nightly-merge@master
+        with:
+          user_name: BadmintonVlaanderen
+          stable_branch: master
+          development_branch: docker-deploy
+          allow_ff: false
+          allow_forks: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
