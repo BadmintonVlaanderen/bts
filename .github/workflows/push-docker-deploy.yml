@@ -7,10 +7,10 @@ jobs:
   push-to-docker-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@main
       - name: Push from 'master' to 'docker-deploy'
         uses: ad-m/github-push-action@master
         with:
-          directory: BadmintonVlaanderen
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${GITHUB_REPOSITORY}
           branch: docker-deploy
