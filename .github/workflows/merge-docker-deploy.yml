@@ -14,8 +14,10 @@ jobs:
       - name: Merge from 'master' to 'docker-deploy'
         uses: robotology/gh-action-nightly-merge@master
         with:
+          user_name: BadmintonVlaanderen
           stable_branch: master
           development_branch: docker-deploy
           allow_ff: false
+          allow_forks: true
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
