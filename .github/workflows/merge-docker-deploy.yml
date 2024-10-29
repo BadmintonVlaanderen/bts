@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+        with:
+          ref: docker-deploy
+          token: ${{ secrets.WORKFLOW_ID }}
       - env:
           GH_TOKEN: ${{ secrets.WORKFLOW_ID }}
         name: Merge from 'master' to 'docker-deploy'
