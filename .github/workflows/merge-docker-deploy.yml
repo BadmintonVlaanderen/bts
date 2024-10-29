@@ -7,9 +7,9 @@ jobs:
   merge-to-docker-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@main
       - env:
           GH_TOKEN: ${{ secrets.WORKFLOW_ID }}
         name: Merge from 'master' to 'docker-deploy'
         run: |
-          gh repo clone docker-deploy
           gh pr merge master -m --auto
