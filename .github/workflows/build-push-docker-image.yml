@@ -11,6 +11,21 @@ jobs:
       - uses: actions/checkout@main
       - name: Build and push docker image
         run: |
+          echo "--running push-to-docker-deploy--"
+          echo "--PR merged?-- ${{ github.event.pull_request.merged }}"
+          echo "--pwd-- $(pwd)"
+          echo "--ls--"
+          ls
+          echo "------------------------------"
+          echo "--ls ./bts--"
+          ls ./bts
+          echo "------------------------------"
+          echo "--ls ./bts/.github--"
+          ls ./bts/.github
+          echo "------------------------------"
+          echo "--ls ./bts/.github/workflows--"
+          ls ./bts/.github/workflows
+          echo "------------------------------"
           cd bts
           gh run --shell ./docker-push-bv
         env:
