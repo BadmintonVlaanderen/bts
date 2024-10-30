@@ -10,9 +10,9 @@ jobs:
       - uses: actions/checkout@main
         with:
           ref: docker-deploy
-          token: ${{ secrets.WORKFLOW_ID }}
+          token: ${{ secrets.WORKFLOWS }}
       - env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_ID }}
+          GH_TOKEN: ${{ secrets.WORKFLOWS }}
         name: Merge from 'master' to 'docker-deploy'
         run: |
           gh pr merge master -m --auto
