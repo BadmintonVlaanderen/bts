@@ -14,7 +14,10 @@ const MATCH_TYPES = {
 	'8': 'BS',
 	'9': 'GS',
 	'10': 'BD',
-	'11': 'GD',
+	'11': 'BS',
+	'12': 'GS',
+	'13': 'BD',
+	'14': 'GD',
 };
 
 
@@ -33,7 +36,13 @@ function filter_matches(all_btp_matches, is_league) {
 		});
 	}
 
-	return all_btp_matches.filter(bm => (bm.IsMatch && bm.IsPlayable && bm.MatchNr && bm.MatchNr[0] && bm.From1));
+	return all_btp_matches.filter(bm => {
+		return (
+			bm.IsMatch &&
+			bm.IsPlayable
+			&& bm.MatchNr && (bm.MatchNr[0] !== undefined)
+			&& bm.From1);
+	});
 }
 
 // bts_players: Array of array of players participating.
@@ -71,11 +80,11 @@ function _calc_match_players(matches_by_pid, entries, players, bm, is_league) {
 		if (!bm.Team1Player1ID) return;
 
 		p1ar = [players.get(bm.Team1Player1ID[0])];
-		if (bm.Player2ID) {
+		if (bm.Team1Player2ID) {
 			p1ar.push(players.get(bm.Team1Player2ID[0]));
 		}
 		p2ar = [players.get(bm.Team2Player1ID[0])];
-		if (bm.Player2ID) {
+		if (bm.Team2Player2ID) {
 			p2ar.push(players.get(bm.Team2Player2ID[0]));
 		}
 	} else {
@@ -138,7 +147,7 @@ function _annotate_league_teammatch(btp_tm, team_matches_by_planning, entries, t
 
 	const draw = draws.get(btp_tm.DrawID[0]);
 	const draw_name = draw.Name[0];
-	const event = events.get(draw.EventID[0])
+	const event = events.get(draw.EventID[0]);
 	const event_name = event.Name[0];
 	btp_tm.bts_event_name = event_name === draw_name ? draw_name : `${event_name} ${draw_name}`;
 
@@ -208,6 +217,7 @@ function get_btp_state(response) {
 	for (const bm of matches) {
 		_calc_match_players(matches_by_pid, entries, players, bm, is_league);
 	}
+
 	return {
 		courts,
 		draws,
@@ -226,17 +236,34 @@ function get_btp_state(response) {
 // Parse umpires into our standard format
 function parse_umpires(response) {
 	const btp_t = response.Result[0].Tournament[0];
-	if (!btp_t.Officials || !btp_t.Officials[0] || !btp_t.Officials[0].Official) return [];
-	return btp_t.Officials[0].Official.map(o => {
+	if (!btp_t.Officials || !btp_t.Officials[0]) return [];
+	const officials = btp_t.Officials[0].Official;
+	if (!officials) return [];
+
+	return officials.map(o => {
 		const res = {
-			firstname: o.FirstName[0],
-			lastname: o.Name[0],
 			btp_id: o.ID[0],
 		};
+		if (o.FirstName) {
+			res.firstname = o.FirstName[0];
+			res.lastname = o.Name[0];
+			res.name = res.firstname + ' ' + res.lastname;
+		} else {
+			const m = /^(\S+)\s(.*)$/.exec(o.Name[0] || '');
+			if (m) {
+				res.firstname = m[1];
+				res.lastname = m[2];
+				res.name = o.Name[0];
+			} else {
+				res.firstname = o.Name[0];
+				res.lastname = '';
+				res.name = o.Name[0];
+			}
+		}
+
 		if (o.Country && o.Country[0]) {
 			res.nationality = o.Country[0];
 		}
-		res.name = res.firstname + ' ' + res.lastname;
 		return res;
 	});
 }

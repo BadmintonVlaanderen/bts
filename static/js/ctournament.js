@@ -177,7 +177,7 @@ function ui_show() {
 	}, {
 		label: ci18n('Next Matches'),
 		href: '/admin/t/' + encodeURIComponent(curt.key) + '/upcoming',
-	},]);
+	}]);
 
 	const main = uiu.qs('.main');
 	uiu.empty(main);
@@ -360,6 +360,38 @@ function ui_edit() {
 	uiu.el(only_now_on_court_label, 'input', attrs);
 	uiu.el(only_now_on_court_label, 'span', {}, ci18n('tournament:edit:only_now_on_court'));
 
+	// Scoring system
+	const counting_label = uiu.el(form, 'label');
+	uiu.el(counting_label, 'span', {}, ci18n('tournament:edit:counting'));
+	const counting_select = uiu.el(counting_label, 'select', {
+		name: 'counting',
+	});
+	const ALL_COUNTING_OPTIONS = [
+		'3x21',
+		'3x15',
+		'team3x55',
+		'5x11_15',
+		'5x11_15^90',
+		'5x11_15~NLA',
+		'5x11/3',
+		'5x11_11',
+		'3x11_15',
+		'3x15_18',
+		'2x21+11',
+		'1x21',
+		'1x11_15',
+	];
+	for (const value of ALL_COUNTING_OPTIONS) {
+		const option_attrs = {
+			value,
+		};
+		if (value === curt.counting) {
+			option_attrs.selected = 'selected';
+		}
+		// TODO include bup i18n, get translation from (`settings:counting|${value}`);
+		uiu.el(counting_select, 'option', option_attrs, value);
+	}
+
 	// BTP
 	const btp_fieldset = uiu.el(form, 'fieldset');
 	const btp_enabled_label = uiu.el(btp_fieldset, 'label');
@@ -424,7 +456,7 @@ function ui_edit() {
 	for (const tz of timezones.ALL_TIMEZONES) {
 		const attrs = {
 			value: tz,
-		}
+		};
 
 		if ((tz === curt.btp_timezone) && !marked) {
 			marked = true;
@@ -479,6 +511,7 @@ function ui_edit() {
 			btp_ip: data.btp_ip,
 			btp_password: data.btp_password,
 			btp_timezone: data.btp_timezone,
+			counting: data.counting,
 			dm_style: data.dm_style,
 			ticker_enabled: (!! data.ticker_enabled),
 			ticker_url: data.ticker_url,
@@ -839,6 +872,7 @@ if ((typeof module !== 'undefined') && (typeof require !== 'undefined')) {
 	var cumpires = require('./cumpires');
 	var debug = require('./debug');
 	var form_utils = require('./form_utils');
+	var fullscreen = require('../bup/js/fullscreen');
 	var i18n = require('../bup/js/i18n');
 	var i18n_de = require('../bup/js/i18n_de');
 	var i18n_en = require('../bup/js/i18n_en');

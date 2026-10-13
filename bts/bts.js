@@ -1,8 +1,9 @@
 'use strict';
 
+require('./compat.js');
+
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
 
 const async = require('async');
 const body_parser = require('body-parser');
@@ -107,10 +108,11 @@ function create_app(config, db) {
 	app.get('/h/:tournament_key/logo/:logo_id', http_api.logo_handler);
 
 	wss.on('connection', function connection(ws, req) {
-		const location = url.parse(req.url, true);
-		if (location.path === '/ws/admin') {
+		const url = new URL(req.url, 'https://placeholder.local/');
+		const path = url.pathname;
+		if (path === '/ws/admin') {
 			return wshandler.handle(admin, app, ws);
-		} else if (location.path === '/ws/bup') {
+		} else if (path === '/ws/bup') {
 			return wshandler.handle(bupws, app, ws);
 		} else {
 			ws.send(JSON.stringify({

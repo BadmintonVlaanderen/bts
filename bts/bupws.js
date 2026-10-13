@@ -1,5 +1,8 @@
 'use strict';
 
+// eslint-disable-next-line no-unused-vars
+const devices = {}; // device ID => data
+
 function handle(/*app, ws*/) {
 	// TODO do something
 }

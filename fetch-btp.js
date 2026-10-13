@@ -81,7 +81,7 @@ async function main() {
 		metavar: 'PORT',
 		help: (
 			'The port of the BTP server.' +
-			` Defaults to automatic (${btp_conn.BLP_PORT} for BTP, ${btp_conn.BLP_PORT} for CP)`),
+			` Defaults to automatic (${btp_conn.BTP_PORT} for BTP, ${btp_conn.BLP_PORT} for CP)`),
 	});
 	parser.addArgument(['-p', '--password'], {
 		metavar: 'PASSWORD',
@@ -187,7 +187,7 @@ async function main() {
 			parser.error('Need target IP (use --ip 1.2.3.4)');
 			return;
 		}
-		const port = args.port || args.league ? btp_conn.BLP_PORT : btp_conn.BTP_PORT;
+		const port = parseInt(args.port || (args.league ? btp_conn.BLP_PORT : btp_conn.BTP_PORT));
 		const xml_request = btp_proto.get_info_request(args.password);
 		const raw_request = btp_proto.encode(xml_request);
 
@@ -286,7 +286,7 @@ async function main() {
 			const btp_id = tkey + '_' + discipline_name + '_' + match_num;
 
 			const match = btp_sync.craft_match(
-				tkey, btp_id, pseudo_court_map, event, draw, officials, bm, match_ids_on_court);
+				tkey, btp_id, pseudo_court_map, event, draw, officials, bm, match_ids_on_court, match_types, is_league, btp_state);
 			if (!match) {
 				continue;
 			}

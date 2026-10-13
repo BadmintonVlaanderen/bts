@@ -4,14 +4,11 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-const {_it, _describe, assert_snapshot} = require('./tutils.js');
-
 const btp_parse = require('../bts/btp_parse');
+const {assert_snapshot} = require('./tutils.js');
 
-
-
-_describe('btp_parse', () => {
-	_it('DMO35 2017 finals', async() => {
+describe('btp_parse', () => {
+	it('DMO35 2017 finals', async() => {
 		const test_file = path.join(__dirname, 'testdata', 'dmo35_finals.json');
 		const contents = await fs.promises.readFile(test_file, 'utf-8');
 
@@ -116,7 +113,7 @@ _describe('btp_parse', () => {
 		// TODO distinguish walkovers
 	});
 
-	_it('incomplete_matches', async() => {
+	it('incomplete_matches', async() => {
 		const test_file = path.join(__dirname, 'testdata', 'incomplete_matches.json');
 		const contents = await fs.promises.readFile(test_file, 'utf-8');
 
@@ -126,4 +123,25 @@ _describe('btp_parse', () => {
 		const matches = bs.matches;
 		assert.deepStrictEqual(matches, []);
 	});
+
+	it('team tournament', async() => {
+		const test_file = path.join(__dirname, 'testdata', 'dmm.json');
+		const contents = await fs.promises.readFile(test_file, 'utf-8');
+
+		const response = JSON.parse(contents);
+		const bs = btp_parse.get_btp_state(response);
+
+		const matches = bs.matches;
+		assert.equal(matches.length, 256)
+	});
+
+	it('umpire parsing DMO35', async() => {
+		const test_file = path.join(__dirname, 'testdata', 'umpires-dmo35.json');
+		const contents = await fs.promises.readFile(test_file, 'utf-8');
+		const response = JSON.parse(contents);
+
+		const parsed = btp_parse.parse_umpires(response);
+		assert_snapshot(__dirname, 'parsed_umpires_dmo35', parsed);
+	});
+
 });

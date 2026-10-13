@@ -260,7 +260,6 @@ function _make_setup(d) {
 	if (d.override_colors_checkbox) {
 		override_colors = {};
 		for (let team_id = 0;team_id < 2;team_id++) {
-			const team_override_colors = {};
 			for (const key of OVERRIDE_COLORS_KEYS) {
 				override_colors[key + team_id] = d[`override_colors_${team_id}_${key}`];
 			}
@@ -273,6 +272,7 @@ function _make_setup(d) {
 		match_num: parseInt(d.match_num),
 		match_name: d.match_name,
 		scheduled_time_str: d.scheduled_time_str,
+		scheduled_date: d.scheduled_date,
 		event_name: d.event_name,
 		umpire_name: d.umpire_name,
 		service_judge_name: d.service_judge_name,
@@ -621,6 +621,7 @@ function render_edit(form, match) {
 		placeholder: ci18n('e.g. MX O55'),
 		size: 10,
 		value: setup.event_name || '',
+		tabindex: 1,
 	});
 
 	uiu.el(metadata, 'span', 'match_label', 'Match:');
@@ -630,6 +631,7 @@ function render_edit(form, match) {
 		placeholder: ci18n('e.g. semi-finals'),
 		size: 10,
 		value: setup.match_name || '',
+		tabindex: 1,
 	});
 
 	const start = uiu.el(edit_match_container, 'div');
@@ -639,8 +641,9 @@ function render_edit(form, match) {
 		name: 'scheduled_date',
 		pattern: '^[0-9]{4,}-(?:0[0-9]|10|11|12)-(?:[012][0-9]|30|31)$',
 		title: 'Date in ISO8601 format, e.g. 2020-05-30',
-		size: 6,
+		style: 'width: 10ch;',
 		value: setup.scheduled_date || '',
+		tabindex: 2,
 	});
 
 	uiu.el(start, 'span', 'match_label', ci18n('Time:'));
@@ -651,6 +654,7 @@ function render_edit(form, match) {
 		title: 'Time in 24 hour format, e.g. 09:23',
 		size: 3,
 		value: setup.scheduled_time_str || '',
+		tabindex: 2,
 	});
 
 	const player_table = uiu.el(edit_match_container, 'table');
@@ -757,9 +761,6 @@ function render_edit(form, match) {
 	if (curt.is_team) {
 		const team_tr = uiu.el(player_tbody, 'tr');
 
-		uiu.el(team_tr, 'td', {
-			colspan: 4,
-		}, 'Teams:');
 		const td_team0 = uiu.el(team_tr, 'td');
 		uiu.el(td_team0, 'input', {
 			type: 'text',

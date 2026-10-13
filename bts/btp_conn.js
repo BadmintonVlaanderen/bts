@@ -116,13 +116,13 @@ class BTPConn {
 
 	fetch() {
 		const ir = btp_proto.get_info_request(this.password);
-		this.send(ir, response => {
-			btp_sync.fetch(this.app, this.tkey, response, (err) => {
-				if (err) {
-					this.report_status('Synchronisations-Fehler: ' + err.stack);
-					console.error(err.stack);
-				}
-			});
+		this.send(ir, async response => {
+			try {
+				await btp_sync.fetch(this.app, this.tkey, response);
+			} catch (err) {
+				this.report_status('Synchronisations-Fehler: ' + err.stack);
+				console.error(err.stack); // eslint-disable-line no-console
+			}
 		});
 	}
 
@@ -274,8 +274,14 @@ class BTPConn {
 				return;
 			}
 
-			const req = btp_proto.update_request(
-				match, this.key_unicode, this.password, umpire_btp_id, service_judge_btp_id, court_btp_id);
+			let req;
+			try {
+				req = btp_proto.update_request(
+					match, this.key_unicode, this.password, umpire_btp_id, service_judge_btp_id, court_btp_id);
+			} catch (err) {
+				serror.silent(`Failed to craft update request. ${err.stack}`);
+				return;
+			}
 			this.send(req, response => {
 				const results = response.Action[0].Result;
 				const rescode = results ? results[0] : 'no-result';

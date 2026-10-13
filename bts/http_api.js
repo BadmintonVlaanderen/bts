@@ -44,6 +44,9 @@ function create_match_representation(tournament, match) {
 	setup.match_id = 'bts_' + match._id;
 	setup.team_competition = tournament.is_team;
 	setup.nation_competition = tournament.is_nation_competition;
+	if (tournament.counting) {
+		setup.counting = tournament.counting;
+	}
 	for (const t of setup.teams) {
 		if (!t.players) continue;
 
@@ -89,6 +92,9 @@ function create_event_representation(tournament) {
 		id: 'bts_' + tournament.key,
 		tournament_name: tournament.name,
 	};
+	if (tournament.counting) {
+		res.counting = tournament.counting;
+	}
 	if (tournament.logo_id) {
 		res.tournament_logo_url = `/h/${encodeURIComponent(tournament.key)}/logo/${tournament.logo_id}`;
 	}
@@ -257,6 +263,7 @@ function score_handler(req, res) {
 		presses: req.body.presses,
 		duration_ms: req.body.duration_ms,
 		end_ts: req.body.end_ts,
+		marks: req.body.marks,
 	};
 	if (update.team1_won !== undefined) {
 		update.btp_winner = (update.team1_won === true) ? 1 : 2;
